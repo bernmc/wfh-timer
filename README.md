@@ -7,6 +7,10 @@ Made by a doctor for colleagues who work from home and need a defensible record 
 their hours for the ATO (or just for themselves). No accounts, no subscriptions, and
 your data never leaves your Mac.
 
+<p align="center">
+  <img src="docs/screenshot.png" alt="WFH Timer window showing the analogue timer and the stop-session dialog" width="620">
+</p>
+
 ## What it does
 
 - Lives quietly as a little **house icon** at the top-right of your screen (the menu bar).
