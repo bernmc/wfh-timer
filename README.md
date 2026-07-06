@@ -3,9 +3,9 @@
 **A tiny, free Mac app that records your work-from-home hours — so tax time is a
 two-minute job instead of a guessing game.**
 
-Made by a doctor for colleagues who work from home and need a defensible record of
-their hours for the ATO (or just for themselves). No accounts, no subscriptions, and
-your data never leaves your Mac.
+A simple work-from-home timer that produces a defensible record of your hours for the
+ATO (or just for yourself). No accounts, no subscriptions, and your data never leaves
+your Mac.
 
 <p align="center">
   <img src="docs/screenshot.png" alt="WFH Timer window showing the analogue timer and the stop-session dialog" width="620">
@@ -76,7 +76,7 @@ like. But talk to your accountant about what you can claim — this app records 
 it doesn't give tax advice.
 
 **Something's not working / I have an idea.** Open an issue on this page (the "Issues"
-tab) or tell Bernard at work.
+tab).
 
 ---
 
