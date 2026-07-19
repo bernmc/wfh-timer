@@ -781,27 +781,44 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         NSApp.activate(ignoringOtherApps: true)
         let alert = NSAlert()
         alert.messageText = "Stop timer?"
-        alert.informativeText = "Recorded \(hm(net)) (started \(timeFmt.string(from: start)))."
-        let field = NSTextField(frame: NSRect(x: 0, y: 0, width: 280, height: 24))
-        field.placeholderString = "Optional note (what you worked on)"
-        alert.accessoryView = field
+        var info = "Recorded \(hm(net))."
+        if deducted > 0 { info += " \(hm(deducted)) of away time will be deducted." }
+        info += " Adjust the times below if you started late or forgot."
+        alert.informativeText = info
+        let container = NSView(frame: NSRect(x: 0, y: 0, width: 280, height: 86))
+        let startField = labeledField(y: 62, placeholder: "Start (e.g. 9 or 0930)",
+                                      value: timeFmt.string(from: start))
+        let stopField = labeledField(y: 32, placeholder: "Stop (e.g. 12:30)",
+                                     value: timeFmt.string(from: stop))
+        let noteField = labeledField(y: 2, placeholder: "Optional note (what you worked on)")
+        for f in [startField, stopField, noteField] { container.addSubview(f) }
+        alert.accessoryView = container
         alert.addButton(withTitle: "Save Session")
         alert.addButton(withTitle: "Cancel")
         alert.addButton(withTitle: "Discard")
-        alert.window.initialFirstResponder = field
+        alert.window.initialFirstResponder = noteField
 
-        let resp = alert.runModal()
-        if resp == .alertFirstButtonReturn {
-            let minutes = max(1, Int((net / 60).rounded()))
+        while true {
+            let resp = alert.runModal()
+            if resp == .alertSecondButtonReturn { return }               // Cancel: keep running
+            if resp == .alertThirdButtonReturn { break }                 // Discard
+            guard let s = parseFlexibleTime(startField.stringValue),
+                  let e = parseFlexibleTime(stopField.stringValue) else {
+                alert.informativeText = "⚠️ Times like 9, 0930 or 14:30 (not 3 digits — 140 is ambiguous)."
+                continue
+            }
+            let st = timeFmt.date(from: s)!, en = timeFmt.date(from: e)!
+            var mins = Int(en.timeIntervalSince(st) / 60)
+            if mins <= 0 { mins += 24 * 60 }                             // crossed midnight
+            mins = max(1, mins - Int(deducted / 60))
             appendSession(Session(date: dateFmt.string(from: start),
-                                  start: timeFmt.string(from: start),
-                                  stop: timeFmt.string(from: stop),
-                                  minutes: minutes,
-                                  note: field.stringValue))
-            clearSession()
-        } else if resp == .alertThirdButtonReturn {
-            clearSession()
+                                  start: s,
+                                  stop: e,
+                                  minutes: mins,
+                                  note: noteField.stringValue))
+            break
         }
+        clearSession()
         updateTitle()
     }
 
